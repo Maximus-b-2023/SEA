@@ -1,2 +1,2 @@
 # SEA
-Softwae Engineering Agile Assignment
+Software Engineering Agile Assignment
