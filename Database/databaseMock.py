@@ -26,17 +26,17 @@ def mockCrops():
 def mockUsers():
     try:
         conn.execute(
-        '''INSERT INTO user (USERNAME,PASSWORD,EMAIL)
+        '''INSERT INTO user (USERNAME,PASSWORD,EMAIL,ACCOUNTTYPE)
         VALUES
-            ("TestUser1","Test1","TestUser1@email.com"),
-            ("TestUser2","Test2","TestUser2@email.com"),
-            ("TestUser3","Test3","TestUser3@email.com"),
-            ("TestUser4","Test4","TestUser4@email.com"),
-            ("TestUser4","Test4","TestUser4@email.com");'''
+            ("TestUser1","Test1","TestUser1@email.com","Admin"),
+            ("TestUser2","Test2","TestUser2@email.com","User"),
+            ("TestUser3","Test3","TestUser3@email.com","User"),
+            ("TestUser4","Test4","TestUser4@email.com","User"),
+            ("TestUser5","Test5","TestUser5@email.com","User");'''
         )
         conn.commit()
         print("Insert success")
     except: print("insert failed")
         
-
+mockCrops()
 mockUsers()
