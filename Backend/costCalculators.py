@@ -22,6 +22,3 @@ def calcMinValue(cropName, quantity):
 def calcSeedCost(cropName, quantity):
     seedsCost = quantity * getSeedPrice(cropName)
     return seedsCost
-
-print(calcSeedCost("Strawberry", 20))
-print(calcMinValue("Strawberry", 20))
