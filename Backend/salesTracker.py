@@ -17,5 +17,3 @@ def createSaleReport(userId,cropName, season, quantity, revenue):
         conn.commit()
     except:
         print("insert failed - "+ sql)
-
-createSaleReport(1,"Strawberry","Spring",200,30000)
