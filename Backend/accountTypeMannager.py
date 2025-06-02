@@ -52,6 +52,4 @@ def updateAccountType(UID,targetUID, newAccountType):
     else:
         print("User not verified for this action")
         return "User not verified for this action"
-    
-updateAccountType(1, 2 , "Admin")
-    
+

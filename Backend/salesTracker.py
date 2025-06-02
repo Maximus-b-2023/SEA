@@ -15,5 +15,10 @@ def createSaleReport(userId,cropName, season, quantity, revenue):
     try:
         conn.execute(sql)
         conn.commit()
+        print("Insert successful")
+        return("insert successful")
     except:
         print("insert failed - "+ sql)
+        return "insert successful"
+
+createSaleReport(2,"Strawberry","Spring",200,40000)
