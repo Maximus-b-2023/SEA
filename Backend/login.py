@@ -1,22 +1,42 @@
 import sqlite3
-
-try:
-    conn = sqlite3.connect('./Database/tables.db')
-    cur = conn.cursor()
-except:
-    print("connection failed")
+import os
+import dotenv
 
 
 def login(email,password):
     try:
-        sql = '''SELECT ROWID from user WHERE EMAIL = "''' + email + '''" AND PASSWORD = "''' + password + '";'
-        cur.execute(sql)
-        UID = cur.fetchone()
-        print(int(UID[0]))
-        return int(UID[0])
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
+    try:
+        sql = '''SELECT ROWID, USERNAME from user WHERE EMAIL = (?) AND PASSWORD = (?)'''
+        params = (email, password)
+        cur.execute(sql,params)
+        creds = cur.fetchall()
+        UID = creds[0][0]
+        username = creds[0][1]
+        dotenv.load_dotenv()
+        dotenv.set_key("UID", UID)
+        dotenv.set_key("EMAIL", email)
+        dotenv.set_key("USERNAME", username)
+        return int(creds)
     except:
         print("invalid email or password")
         return "invalid email or password"
-    
-login("TestUser2@email.com", "Test2")
-     
+
+def getUsername(UID):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
+    try:
+        sql = '''SELECT USERNAME FROM user WHERE ROWID = (?)'''
+        params = (UID,)
+        cur.execute(sql,params)
+        username = cur.fetchone()
+        return username[0]
+    except:
+        print("Username retrieval failed")
+        return "Username retrieval failed"
