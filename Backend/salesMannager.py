@@ -2,14 +2,13 @@ import sqlite3
 
 from accountTypeMannager import authAdmin
 
-try:
-    conn = sqlite3.connect('./Database/tables.db')
-    cur = conn.cursor()
-except:
-    print("connection failed")
-
 
 def fetchSales(UID):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
     if authAdmin(UID) == True:
         try:
             sql = '''SELECT ROWID,* FROM sales'''
@@ -23,10 +22,12 @@ def fetchSales(UID):
     else:
         print("User not verified for this action")
         return "User not verified for this action"
-    
-fetchSales(1)
 
 def deleteSales(UID,saleID):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+    except:
+        return "connection failed"
     if authAdmin(UID) == True:
         try:
             sql = '''DELETE FROM sales WHERE ROWID = ''' + str(saleID) + ";"
@@ -40,5 +41,3 @@ def deleteSales(UID,saleID):
     else:
         print("User not verified for this action")
         return "User not verified for this action"
-
-deleteSales(1,1)

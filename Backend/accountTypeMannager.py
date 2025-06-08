@@ -1,12 +1,12 @@
 import sqlite3
 
-try:
-    conn = sqlite3.connect('./Database/tables.db')
-    cur = conn.cursor()
-except:
-    print("connection failed")
 
 def authAdmin(UID):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
     try:
         sql = '''SELECT ACCOUNTTYPE FROM user WHERE ROWID = ''' + str(UID) + ';'
         cur.execute(sql)
@@ -23,6 +23,11 @@ def authAdmin(UID):
 
 
 def fetchUsers(UID):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
     if authAdmin(UID) == True:
         try:
             sql = '''SELECT ROWID, USERNAME, ACCOUNTTYPE FROM user'''
@@ -39,6 +44,11 @@ def fetchUsers(UID):
     
 
 def updateAccountType(UID,targetUID, newAccountType):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
     if authAdmin(UID) == True:
         try:
             sql = '''UPDATE user SET ACCOUNTTYPE = "''' + newAccountType + '" WHERE ROWID = ' + str(targetUID) + ';'

@@ -3,9 +3,12 @@ from werkzeug.security import generate_password_hash
 
 from accountTypeMannager import authAdmin
 
-conn = sqlite3.connect('./Database/tables.db')
 
 def updatePasswordAdmin(UID,targetUID, newPassword):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+    except:
+        return "connection failed"
     if authAdmin(UID) == True:
         try:
             sql = '''UPDATE user SET PASSWORD = "''' + generate_password_hash(newPassword) + '" WHERE ROWID = ' + str(targetUID) + ';'
@@ -22,6 +25,10 @@ def updatePasswordAdmin(UID,targetUID, newPassword):
     
 def updatePassword(UID, newPassword):
     try:
+        conn = sqlite3.connect('./Database/tables.db')
+    except:
+        return "connection failed"
+    try:
         sql = '''UPDATE user SET PASSWORD = "''' + generate_password_hash(newPassword) + '" WHERE ROWID = ' + str(UID) + ';'
         conn.execute(sql)
         conn.commit()
@@ -30,6 +37,3 @@ def updatePassword(UID, newPassword):
     except:
         print("Update failed")
         return "Update failed"
-    
-updatePasswordAdmin(1,3,"Test3.5")
-updatePassword(4,"Test4.5")

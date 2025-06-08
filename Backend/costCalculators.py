@@ -1,15 +1,23 @@
 import sqlite3
 
-conn = sqlite3.connect('./Database/tables.db')
-cur = conn.cursor()
 
 def getCropPrice(userinput):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
     sql = 'select LOWESTSELLINGPRICE from crops WHERE CROPNAME ="'+ userinput + '";'
     cur.execute(sql)
     cropValue = cur.fetchone()
     return int(cropValue[0])
 
 def getSeedPrice(userinput):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
     sql = 'select SEEDPRICE from crops WHERE CROPNAME ="'+ userinput + '";'
     cur.execute(sql)
     seedPrice = cur.fetchone()
