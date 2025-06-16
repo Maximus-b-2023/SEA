@@ -62,6 +62,11 @@ class LoginForm(FlaskForm):
     remember = BooleanField("Remember Me")
     submit = SubmitField("Log In")
 
+class PasswordUpdateForm(FlaskForm):
+    newpassword = PasswordField("NewPassword", validators=[InputRequired(), Length(min=6, max=80)])
+    confirmpassword = PasswordField("ConfirmPassword", validators=[InputRequired(), Length(min=6, max=80)])
+    submit = SubmitField("Update Password")
+
 class AccountForm(FlaskForm):
     userid = StringField("User ID", validators=[InputRequired()])
     accounttype = StringField("Account Type", validators=[InputRequired()])
@@ -185,7 +190,38 @@ def addSale():
     
     return render_template("addSale.html", form=form)
 
+@app.route('/deleteSale/<int:saleid>', methods=['GET','POST'])
+@login_required
+def deleteSale(saleid):
+    sale = Sales.query.get_or_404(saleid)
+    if sale.userid == current_user.id or authAdmin(current_user.id):
+        db.session.delete(sale)
+        db.session.commit()
+        flash("Sale deleted successfully.")
+    else:
+        flash("You do not have permission to delete this sale.")
+    return redirect(url_for("sales"))
 
+@app.route('/updatePassword/<int:userid>', methods=['POST', 'GET'])
+@login_required
+def updatePassword(userid):
+    form = PasswordUpdateForm()
+    if form.validate_on_submit():
+        if form.newpassword.data != form.confirmpassword.data:
+            flash("Passwords do not match.")
+            return redirect(url_for("updatePassword", userid=current_user.id))
+        
+        if userid == current_user.id or authAdmin(current_user.id):
+            user = Users.query.get_or_404(userid)
+            user.password = generate_password_hash(form.newpassword.data, method="pbkdf2:sha256")
+            db.session.commit()
+            flash("Password updated successfully.")
+            return redirect(url_for("index"))
+        else:
+            flash("Permission denied. You can only update your own password.")
+            return redirect(url_for("updatePassword", userid=current_user.id))
+
+    return render_template("updatePassword.html", form=form, userid=userid)
 
 if __name__ == "__main__":
     with app.app_context():

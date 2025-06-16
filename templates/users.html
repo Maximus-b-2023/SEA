@@ -13,8 +13,11 @@
         <td>{{ user[0] }}</td>
         <td>{{ user[1] }}</td>
         <td>{{ user[2] }}</td>
-        <td>{{ user[3] }}</td>
-    </tr>
+        <td>
+            {% if current_user.accounttype == "Admin" %}
+                <a href="{{ url_for('updatePassword', userid=user[0]) }}">Update Password</a>
+            {% endif %}
+        </td>
     {% endfor %}
 </table>
 <a href="{{ url_for('index') }}">Return to dashboard</a>
