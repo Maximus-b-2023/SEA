@@ -67,6 +67,13 @@ class AccountForm(FlaskForm):
     accounttype = StringField("Account Type", validators=[InputRequired()])
     submit = SubmitField("Update Account Type")
 
+class SaleForm(FlaskForm):
+    cropname = StringField("Crop Name", validators=[InputRequired()])
+    season = StringField("Season", validators=[InputRequired()])
+    quantitysold = StringField("Quantity Sold", validators=[InputRequired()])
+    revenue = StringField("Revenue", validators=[InputRequired()])
+    submit = SubmitField("Add Sale")
+
 @app.route("/")
 @login_required
 def index():
@@ -153,6 +160,31 @@ def sales():
     else:
         sales = Sales.query.filter_by(userid=current_user.id).all()
         return render_template("sales.html", sales=sales)
+    
+@app.route('/addSale', methods=['GET','POST'])
+@login_required
+def addSale():
+    form = SaleForm()
+    if form.validate_on_submit():
+        userid = current_user.id
+        cropname = form.cropname.data
+        season = form.season.data
+        quantitysold = form.quantitysold.data
+        revenue = form.revenue.data
+        
+        crop = Crops.query.filter_by(cropname=cropname).first()
+        if not crop:
+            flash("Crop not found.")
+            return redirect(url_for("addSale"))
+        
+        new_sale = Sales(userid=userid, cropid=crop.id, season=season, quantitysold=quantitysold, profitmade=revenue)
+        db.session.add(new_sale)
+        db.session.commit()
+        flash("Sale added successfully.")
+        return redirect(url_for("sales"))
+    
+    return render_template("addSale.html", form=form)
+
 
 
 if __name__ == "__main__":
