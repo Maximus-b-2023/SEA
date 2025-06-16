@@ -3,20 +3,29 @@ import sqlite3
 from costCalculators import calcSeedCost
 
 
-def createSaleReport(userId,cropName, season, quantity, revenue):
+def createSaleReport(userId,cropId, season, quantity, revenue):
     try:
         conn = sqlite3.connect('./Database/tables.db')
     except:
         return "connection failed"
-    profit = revenue - calcSeedCost(cropName, quantity)
-    sql = '''INSERT INTO sales (USERID,CROPNAME,SEASON,QUANTITYSOLD,PROFITMADE)
-        VALUES
-            ('''+ str(userId) + ',"'+ cropName + '","'+ season + '",' + str(quantity) + ',' + str(profit) + ');'
+    profit = revenue - calcSeedCost(cropId, quantity)
+    sql = '''INSERT INTO sales (userid,cropid,season,quantitysold,profitmade) VALUES(?,?,?,?,?)'''
+    params = (userId, cropId, season, quantity, profit)
     try:
-        conn.execute(sql)
+        conn.execute(sql, params)
         conn.commit()
         print("Insert successful")
         return("insert successful")
     except:
-        print("insert failed - "+ sql)
+        print("insert failed - "+ sql + " " + str(params))
         return "insert successful"
+    
+createSaleReport(1, 8, "Spring", 100, 15000) 
+createSaleReport(1, 1, "Spring", 10, 800) 
+createSaleReport(1, 5, "Spring", 100, 9000) 
+createSaleReport(2, 8, "Spring", 50, 8000) 
+createSaleReport(2, 1, "Spring", 100, 8000) 
+createSaleReport(2, 5, "Spring", 50, 4500) 
+createSaleReport(3, 8, "Spring", 1000, 150000) 
+createSaleReport(3, 1, "Spring", 20, 1600) 
+createSaleReport(3, 5, "Spring", 25, 2700) 

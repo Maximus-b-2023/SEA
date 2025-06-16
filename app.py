@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 import os
 
-from Backend.accountTypeMannager import fetchUsers, updateAccountType
+from Backend.accountTypeMannager import authAdmin, fetchUsers, updateAccountType
 
 dbdir = "sqlite:///" + os.path.abspath(os.getcwd()) + "./Database/tables.db"
 
@@ -39,10 +39,12 @@ class Crops(UserMixin, db.Model):
 class Sales(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cropid = db.Column(db.Integer, db.ForeignKey('crops.id'), nullable=False)
-    season = db.Column(db.String(50), nullable=False, unique=True)
+    season = db.Column(db.String(50), nullable=False)
     quantitysold = db.Column(db.Integer, nullable=False)
     profitmade = db.Column(db.Integer, nullable=False)
     userid = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    crops = db.relationship('Crops', backref='sales', lazy=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -125,6 +127,33 @@ def accountTypeMannager():
         return redirect(url_for("index"))
     return render_template("accountTypeMannager.html", form=form)
     
+@app.route('/users', methods=['GET'])
+@login_required
+def users():
+    UID = current_user.id
+    users = fetchUsers(UID)
+    if isinstance(users, list):
+        return render_template("users.html", users=users)
+    else:
+        flash("Could not fetch users.")
+        return redirect(url_for("index"))
+
+@app.route('/crops', methods=['GET'])
+@login_required
+def crops():
+    crops = Crops.query.all()
+    return render_template("crops.html", crops=crops)
+
+@app.route('/sales', methods=['GET'])
+@login_required
+def sales():
+    if authAdmin(current_user.id) == True:
+        sales = Sales.query.all()
+        return render_template("sales.html", sales=sales)
+    else:
+        sales = Sales.query.filter_by(userid=current_user.id).all()
+        return render_template("sales.html", sales=sales)
+
 
 if __name__ == "__main__":
     with app.app_context():

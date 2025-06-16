@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Crops{% endblock %}
+{% block content %}
+<h1>Crops</h1>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Crop name</th>
+        <th>Seed Price</th>
+        <th>Lowest Selling Price</th>
+    </tr>
+    {% for crops in crops %}
+    <tr>
+        <td>{{ crops.id }}</td>
+        <td>{{ crops.cropname }}</td>
+        <td>{{ crops.seedprice }}</td>
+        <td>{{ crops.lowestsellingprice }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('index') }}">Return to dashboard</a>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% block content %}
+<h1>Sales</h1>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Crop Name</th>
+        <th>Season</th>
+        <th>Quantity</th>
+        <th>Profit</th>
+        <th></th>
+    </tr>
+    {% for sales in sales %}
+    <tr>
+        <td>{{ sales.id }}</td>
+        <td>{{ sales.userid }}</td>
+        <td>{{ sales.crops.cropname }}</td>
+        <td>{{ sales.season }}</td>
+        <td>{{ sales.quantitysold }}</td>
+        <td>{{ sales.profitmade }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('index') }}">Return to dashboard</a>
+{% endblock %}

@@ -65,6 +65,6 @@ def setAdmin(UID,AccountType):
     except:
         print("Update failed")
         
-# mockCrops()
+mockCrops()
 # mockUsers()
 setAdmin(1, "Admin")
