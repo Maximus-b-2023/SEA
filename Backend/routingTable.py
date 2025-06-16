@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 from signup import signup
 from login import login
-from flask_login import UserMixin, login_required, logout_user, current_user, LoginManager
+from flask_login import UserMixin, login_required, login_user, logout_user, current_user, LoginManager
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from accountTypeMannager import fetchUsers, updateAccountType
-from flaskSession import LoginForm, RegisterForm, createUser
+from flaskSession import LoginForm, RegisterForm, createUser, User
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
@@ -108,7 +108,19 @@ def runFlaskRegister():
 
 @app.route('/flaskLogin', methods=['GET','POST'])
 def runFlaskLogin():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for('runDashboard'))
+        else:
+            return 'Invalid username or password'
+    return render_template('login.html')
 
-    
+@app.route('/dashboard', methods=['GET','POST'])
+@login_required
+def runDashboard():
+    return render_template('dashboard.html')
 
 app.run(debug=True)

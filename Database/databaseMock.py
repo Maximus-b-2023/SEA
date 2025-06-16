@@ -1,5 +1,25 @@
 import sqlite3
 
+def updateAccountType(targetUID, newAccountType):
+    try:
+        conn = sqlite3.connect('./Database/tables.db')
+        cur = conn.cursor()
+    except:
+        return "connection failed"
+    #if authAdmin(UID) == True:
+    try:
+        sql = '''UPDATE users SET accounttype = "''' + newAccountType + '" WHERE ROWID = ' + str(targetUID) + ';'
+        conn.execute(sql)
+        conn.commit()
+        print ("User " + str(targetUID) + " updated to account type " + newAccountType)
+        return ("User " + str(targetUID) + " updated to account type " + newAccountType)
+    except:
+        print("Update failed")
+        return "Update failed"
+    #else:
+        print("User not verified for this action")
+        return "User not verified for this action"
+
 conn = sqlite3.connect('./Database/tables.db')
 cur = conn.cursor
 
@@ -26,17 +46,25 @@ def mockCrops():
 def mockUsers():
     try:
         conn.execute(
-        '''INSERT INTO user (USERNAME,PASSWORD,EMAIL,ACCOUNTTYPE)
+        '''INSERT INTO users (username,password,email,accounttype)
         VALUES
-            ("TestUser1","Test1","TestUser1@email.com","Admin"),
-            ("TestUser2","Test2","TestUser2@email.com","User"),
-            ("TestUser3","Test3","TestUser3@email.com","User"),
-            ("TestUser4","Test4","TestUser4@email.com","User"),
-            ("TestUser5","Test5","TestUser5@email.com","User");'''
+            ("TestUser1","pbkdf2:sha256:1000000$csl2VrHnTowjV2Sv$465562343bd7ca7160580d75f02e2eb3e61940ea2626bc6eb31f6a6d9b729485","TestUser1@email.com","Admin"),
+            ("TestUser2","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser2@email.com","User"),
+            ("TestUser3","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser3@email.com","User"),
+            ("TestUser4","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser4@email.com","User"),
+            ("TestUser5","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser5@email.com","User");'''
         )
         conn.commit()
         print("Insert success")
     except: print("insert failed")
+
+def setAdmin(UID,AccountType):
+    try:
+        updateAccountType(UID, AccountType)
+        print("Update success")
+    except:
+        print("Update failed")
         
-mockCrops()
-mockUsers()
+# mockCrops()
+# mockUsers()
+setAdmin(1, "Admin")

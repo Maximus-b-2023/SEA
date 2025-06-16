@@ -8,7 +8,7 @@ def authAdmin(UID):
     except:
         return "connection failed"
     try:
-        sql = '''SELECT ACCOUNTTYPE FROM user WHERE ROWID = ''' + str(UID) + ';'
+        sql = '''SELECT ACCOUNTTYPE FROM users WHERE ROWID = ''' + str(UID) + ';'
         cur.execute(sql)
         accountType = cur.fetchone()
     except:
@@ -30,7 +30,7 @@ def fetchUsers(UID):
         return "connection failed"
     if authAdmin(UID) == True:
         try:
-            sql = '''SELECT ROWID, USERNAME, ACCOUNTTYPE FROM user'''
+            sql = '''SELECT ROWID, USERNAME, ACCOUNTTYPE FROM users'''
             cur.execute(sql)
             userList = cur.fetchall()
             print(userList)
@@ -51,7 +51,7 @@ def updateAccountType(UID,targetUID, newAccountType):
         return "connection failed"
     if authAdmin(UID) == True:
         try:
-            sql = '''UPDATE user SET ACCOUNTTYPE = "''' + newAccountType + '" WHERE ROWID = ' + str(targetUID) + ';'
+            sql = '''UPDATE users SET ACCOUNTTYPE = "''' + newAccountType + '" WHERE ROWID = ' + str(targetUID) + ';'
             conn.execute(sql)
             conn.commit()
             print ("User " + str(targetUID) + " updated to account type " + newAccountType)
