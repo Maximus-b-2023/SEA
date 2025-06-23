@@ -1,3 +1,4 @@
+import sqlite3
 from flask import Flask, jsonify, render_template, redirect, request, url_for, flash
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
@@ -10,11 +11,11 @@ import os
 
 from Backend.accountTypeMannager import authAdmin, fetchUsers, updateAccountType
 
-dbdir = "sqlite:///" + os.path.abspath(os.getcwd()) + "./Database/tables.db"
+#dbdir = "sqlite:///" + os.path.abspath(os.getcwd()) + "./Database/tables.db"
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "SomeSecret"
-app.config["SQLALCHEMY_DATABASE_URI"] = dbdir
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(os.getcwd(), "instance", "db.sqlite3")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
@@ -77,6 +78,93 @@ class SaleForm(FlaskForm):
     quantitysold = StringField("Quantity Sold", validators=[InputRequired()])
     revenue = StringField("Revenue", validators=[InputRequired()])
     submit = SubmitField("Add Sale")
+
+def setAdmin():
+    try:
+        conn = sqlite3.connect('./instance/db.sqlite3')
+    except:
+        return "connection failed"
+    try:
+        sql = '''UPDATE users SET accounttype = 'Admin' WHERE ROWID =  1 ;'''
+        conn.execute(sql)
+        conn.commit()
+    except:
+        print("Update failed")
+        return "Update failed"
+    
+def mockCrops():
+    if not Crops.query.first():
+        db.session.add(Crops(cropname="Blue Jazz", seedprice=30, lowestsellingprice=50))
+        db.session.add(Crops(cropname="Cauliflower", seedprice=80, lowestsellingprice=175))
+        db.session.add(Crops(cropname="Garlic", seedprice=40, lowestsellingprice=60))
+        db.session.add(Crops(cropname="Green Bean", seedprice=60, lowestsellingprice=40))
+        db.session.add(Crops(cropname="Kale", seedprice=70, lowestsellingprice=110))
+        db.session.add(Crops(cropname="Parsnip", seedprice=70, lowestsellingprice=110))
+        db.session.add(Crops(cropname="Potato", seedprice=50, lowestsellingprice=80))
+        db.session.add(Crops(cropname="Strawberry", seedprice=100, lowestsellingprice=120))
+        db.session.add(Crops(cropname="Tulip", seedprice=20, lowestsellingprice=30))
+        db.session.add(Crops(cropname="Unmilled Rice", seedprice=40, lowestsellingprice=30))
+        db.session.commit()
+
+def mockSales():
+    if not Sales.query.first():
+        db.session.add(Sales(cropid=1, season="Spring", quantitysold=10, profitmade=1000, userid=1))
+        db.session.add(Sales(cropid=2, season="Spring", quantitysold=5, profitmade=500, userid=1))
+        db.session.add(Sales(cropid=3, season="Spring", quantitysold=15, profitmade=1500, userid=2))
+        db.session.add(Sales(cropid=4, season="Spring", quantitysold=20, profitmade=2000, userid=3))
+        db.session.add(Sales(cropid=5, season="Spring", quantitysold=25, profitmade=2500, userid=4))
+        db.session.commit()
+    
+def initDB():
+    with app.app_context():
+        db.create_all()
+        # Only add if not already present
+        if not Users.query.filter(
+        (Users.username == "Admin1") | (Users.email == "Admin1@admin.com")
+        ).first():
+            hashed_pw = generate_password_hash("Admin123", method="pbkdf2:sha256")
+            new_user = Users(username="Admin1", email="Admin1@admin.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User1") | (Users.email == "User1@user.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser1", method="pbkdf2:sha256")
+            new_user = Users(username="User1", email="User1@user.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User2") | (Users.email == "User2@user.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser2", method="pbkdf2:sha256")
+            new_user = Users(username="User2", email="User2@user.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User3") | (Users.email == "User3@user.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser3", method="pbkdf2:sha256")
+            new_user = Users(username="User3", email="User3@user.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User4") | (Users.email == "User4@user.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser4", method="pbkdf2:sha256")
+            new_user = Users(username="User4", email="User4@user.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        setAdmin()  # Ensure the first user is an admin
+        if not Crops.query.first():
+            mockCrops()
+        if not Sales.query.first():
+            mockSales()
+
+# def is_gunicorn_worker():
+#     return "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
+
+# if not is_gunicorn_worker() or os.environ.get("GUNICORN_WORKER_ID", "0") == "0":
+#     initDB()
 
 @app.route("/")
 @login_required
@@ -222,7 +310,9 @@ def updatePassword(userid):
 
     return render_template("updatePassword.html", form=form, userid=userid)
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+
+print("App module loaded")
+
+# if __name__ == "__main__":
+#     initDB()
+#     app.run()

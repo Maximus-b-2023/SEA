@@ -4,12 +4,12 @@ import os
 
 def login(email,password):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
         cur = conn.cursor()
     except:
         return "connection failed"
     try:
-        sql = '''SELECT ROWID, USERNAME from user WHERE EMAIL = (?) AND PASSWORD = (?)'''
+        sql = '''SELECT ROWID, USERNAME from users WHERE EMAIL = (?) AND PASSWORD = (?)'''
         params = (email, password)
         cur.execute(sql,params)
         creds = cur.fetchall()
@@ -20,12 +20,12 @@ def login(email,password):
 
 def getUsername(UID):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
         cur = conn.cursor()
     except:
         return "connection failed"
     try:
-        sql = '''SELECT USERNAME FROM user WHERE ROWID = (?)'''
+        sql = '''SELECT USERNAME FROM users WHERE ROWID = (?)'''
         params = (UID,)
         cur.execute(sql,params)
         username = cur.fetchone()

@@ -1,8 +1,9 @@
 import sqlite3
 
+
 def updateAccountType(targetUID, newAccountType):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
         cur = conn.cursor()
     except:
         return "connection failed"
@@ -20,7 +21,7 @@ def updateAccountType(targetUID, newAccountType):
         print("User not verified for this action")
         return "User not verified for this action"
 
-conn = sqlite3.connect('./Database/tables.db')
+conn = sqlite3.connect('./instance/db.sqlite3')
 cur = conn.cursor
 
 def mockCrops():
@@ -43,28 +44,20 @@ def mockCrops():
         print("Insert success")
     except: print("insert failed")
 
-def mockUsers():
+def mockSales():
     try:
         conn.execute(
-        '''INSERT INTO users (username,password,email,accounttype)
+        '''INSERT INTO sales (CROPID,SEASON,QUANTITYSOLD,PROFITMADE,USERID)
         VALUES
-            ("TestUser1","pbkdf2:sha256:1000000$csl2VrHnTowjV2Sv$465562343bd7ca7160580d75f02e2eb3e61940ea2626bc6eb31f6a6d9b729485","TestUser1@email.com","Admin"),
-            ("TestUser2","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser2@email.com","User"),
-            ("TestUser3","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser3@email.com","User"),
-            ("TestUser4","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser4@email.com","User"),
-            ("TestUser5","pbkdf2:sha256:1000000$J3LhzEqa5hflvj7L$526ee2f1bdee613ef8c729c5ccafb257c5e4ec4b6026307dcb48e6b37c0dc9fd","TestUser5@email.com","User");'''
+            (1,"Spring",10,1000,1),
+            (2,"Spring",5,500,1),
+            (3,"Summer",15,1500,2),
+            (4,"Fall",20,2000,3),
+            (5,"Winter",25,2500,4),
+            (6,"Spring",30,3000,5);'''
         )
         conn.commit()
         print("Insert success")
     except: print("insert failed")
 
-def setAdmin(UID,AccountType):
-    try:
-        updateAccountType(UID, AccountType)
-        print("Update success")
-    except:
-        print("Update failed")
         
-mockCrops()
-# mockUsers()
-setAdmin(1, "Admin")

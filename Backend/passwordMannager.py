@@ -6,12 +6,12 @@ from accountTypeMannager import authAdmin
 
 def updatePasswordAdmin(UID,targetUID, newPassword):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
     except:
         return "connection failed"
     if authAdmin(UID) == True:
         try:
-            sql = '''UPDATE user SET PASSWORD = "''' + generate_password_hash(newPassword) + '" WHERE ROWID = ' + str(targetUID) + ';'
+            sql = '''UPDATE users SET PASSWORD = "''' + generate_password_hash(newPassword) + '" WHERE ROWID = ' + str(targetUID) + ';'
             conn.execute(sql)
             conn.commit()
             print ("User " + str(UID) + " updated password for user " + str(targetUID))
@@ -25,11 +25,11 @@ def updatePasswordAdmin(UID,targetUID, newPassword):
     
 def updatePassword(UID, newPassword):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
     except:
         return "connection failed"
     try:
-        sql = '''UPDATE user SET PASSWORD = "''' + generate_password_hash(newPassword) + '" WHERE ROWID = ' + str(UID) + ';'
+        sql = '''UPDATE users SET PASSWORD = "''' + generate_password_hash(newPassword) + '" WHERE ROWID = ' + str(UID) + ';'
         conn.execute(sql)
         conn.commit()
         print ("User " + str(UID) + " updated password")

@@ -21,9 +21,9 @@ class RegisterForm(FlaskForm):
     submit = SubmitField("Register")
 
     def validateEmail(self, email):
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
         cur = conn.cursor()
-        sql = '''SELECT FROM user WHERE email = (?)'''
+        sql = '''SELECT FROM users WHERE email = (?)'''
         params = email
         try:
             existingEmail = cur.execute(sql,params)
@@ -43,8 +43,8 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 def createUser(username,email,password):
-    conn = sqlite3.connect('./Database/tables.db')
-    sql = '''INSERT INTO user (USERNAME,PASSWORD,EMAIL,ACCOUNTTYPE) VALUES(?,?,?,?)''' 
+    conn = sqlite3.connect('./instance/db.sqlite3')
+    sql = '''INSERT INTO users (USERNAME,PASSWORD,EMAIL,ACCOUNTTYPE) VALUES(?,?,?,?)''' 
     params = (username, password, email, "User")
     try:
         conn.execute(sql, params)

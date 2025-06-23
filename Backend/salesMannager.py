@@ -5,7 +5,7 @@ from accountTypeMannager import authAdmin
 
 def fetchSales(UID):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
         cur = conn.cursor()
     except:
         return "connection failed"
@@ -25,7 +25,7 @@ def fetchSales(UID):
 
 def deleteSales(UID,saleID):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
     except:
         return "connection failed"
     if authAdmin(UID) == True:
