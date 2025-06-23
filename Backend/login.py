@@ -1,6 +1,5 @@
 import sqlite3
 import os
-import dotenv
 
 
 def login(email,password):
@@ -14,12 +13,6 @@ def login(email,password):
         params = (email, password)
         cur.execute(sql,params)
         creds = cur.fetchall()
-        UID = creds[0][0]
-        username = creds[0][1]
-        dotenv.load_dotenv()
-        dotenv.set_key("UID", UID)
-        dotenv.set_key("EMAIL", email)
-        dotenv.set_key("USERNAME", username)
         return int(creds)
     except:
         print("invalid email or password")

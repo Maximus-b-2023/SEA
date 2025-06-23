@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 import os
 
-from Backend.accountTypeMannager import fetchUsers, updateAccountType
+from Backend.accountTypeMannager import authAdmin, fetchUsers, updateAccountType
 
 dbdir = "sqlite:///" + os.path.abspath(os.getcwd()) + "./Database/tables.db"
 
@@ -39,10 +39,12 @@ class Crops(UserMixin, db.Model):
 class Sales(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cropid = db.Column(db.Integer, db.ForeignKey('crops.id'), nullable=False)
-    season = db.Column(db.String(50), nullable=False, unique=True)
+    season = db.Column(db.String(50), nullable=False)
     quantitysold = db.Column(db.Integer, nullable=False)
     profitmade = db.Column(db.Integer, nullable=False)
     userid = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    crops = db.relationship('Crops', backref='sales', lazy=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -60,10 +62,22 @@ class LoginForm(FlaskForm):
     remember = BooleanField("Remember Me")
     submit = SubmitField("Log In")
 
+class PasswordUpdateForm(FlaskForm):
+    newpassword = PasswordField("NewPassword", validators=[InputRequired(), Length(min=6, max=80)])
+    confirmpassword = PasswordField("ConfirmPassword", validators=[InputRequired(), Length(min=6, max=80)])
+    submit = SubmitField("Update Password")
+
 class AccountForm(FlaskForm):
     userid = StringField("User ID", validators=[InputRequired()])
     accounttype = StringField("Account Type", validators=[InputRequired()])
     submit = SubmitField("Update Account Type")
+
+class SaleForm(FlaskForm):
+    cropname = StringField("Crop Name", validators=[InputRequired()])
+    season = StringField("Season", validators=[InputRequired()])
+    quantitysold = StringField("Quantity Sold", validators=[InputRequired()])
+    revenue = StringField("Revenue", validators=[InputRequired()])
+    submit = SubmitField("Add Sale")
 
 @app.route("/")
 @login_required
@@ -125,6 +139,89 @@ def accountTypeMannager():
         return redirect(url_for("index"))
     return render_template("accountTypeMannager.html", form=form)
     
+@app.route('/users', methods=['GET'])
+@login_required
+def users():
+    UID = current_user.id
+    users = fetchUsers(UID)
+    if isinstance(users, list):
+        return render_template("users.html", users=users)
+    else:
+        flash("Could not fetch users.")
+        return redirect(url_for("index"))
+
+@app.route('/crops', methods=['GET'])
+@login_required
+def crops():
+    crops = Crops.query.all()
+    return render_template("crops.html", crops=crops)
+
+@app.route('/sales', methods=['GET'])
+@login_required
+def sales():
+    if authAdmin(current_user.id) == True:
+        sales = Sales.query.all()
+        return render_template("sales.html", sales=sales)
+    else:
+        sales = Sales.query.filter_by(userid=current_user.id).all()
+        return render_template("sales.html", sales=sales)
+    
+@app.route('/addSale', methods=['GET','POST'])
+@login_required
+def addSale():
+    form = SaleForm()
+    if form.validate_on_submit():
+        userid = current_user.id
+        cropname = form.cropname.data
+        season = form.season.data
+        quantitysold = form.quantitysold.data
+        revenue = form.revenue.data
+        
+        crop = Crops.query.filter_by(cropname=cropname).first()
+        if not crop:
+            flash("Crop not found.")
+            return redirect(url_for("addSale"))
+        
+        new_sale = Sales(userid=userid, cropid=crop.id, season=season, quantitysold=quantitysold, profitmade=revenue)
+        db.session.add(new_sale)
+        db.session.commit()
+        flash("Sale added successfully.")
+        return redirect(url_for("sales"))
+    
+    return render_template("addSale.html", form=form)
+
+@app.route('/deleteSale/<int:saleid>', methods=['GET','POST'])
+@login_required
+def deleteSale(saleid):
+    sale = Sales.query.get_or_404(saleid)
+    if sale.userid == current_user.id or authAdmin(current_user.id):
+        db.session.delete(sale)
+        db.session.commit()
+        flash("Sale deleted successfully.")
+    else:
+        flash("You do not have permission to delete this sale.")
+    return redirect(url_for("sales"))
+
+@app.route('/updatePassword/<int:userid>', methods=['POST', 'GET'])
+@login_required
+def updatePassword(userid):
+    form = PasswordUpdateForm()
+    if form.validate_on_submit():
+        if form.newpassword.data != form.confirmpassword.data:
+            flash("Passwords do not match.")
+            return redirect(url_for("updatePassword", userid=current_user.id))
+        
+        if userid == current_user.id or authAdmin(current_user.id):
+            user = Users.query.get_or_404(userid)
+            user.password = generate_password_hash(form.newpassword.data, method="pbkdf2:sha256")
+            db.session.commit()
+            flash("Password updated successfully.")
+            return redirect(url_for("index"))
+        else:
+            flash("Permission denied. You can only update your own password.")
+            return redirect(url_for("updatePassword", userid=current_user.id))
+
+    return render_template("updatePassword.html", form=form, userid=userid)
 
 if __name__ == "__main__":
     with app.app_context():
