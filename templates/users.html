@@ -16,10 +16,9 @@
         <td>
             {% if current_user.accounttype == "Admin" %}
                 <a href="{{ url_for('updatePassword', userid=user[0]) }}">Update Password</a>
+                <a href="{{ url_for('accountTypeMannager', userid=user[0]) }}">Update Account Type</a>
             {% endif %}
         </td>
     {% endfor %}
 </table>
-<a href="{{ url_for('index') }}">Return to dashboard</a>
-<a href="{{ url_for('accountTypeMannager') }}">Account Type Manager</a>
 {% endblock %}

@@ -5,12 +5,9 @@ Account Type Mannager
 {% endblock %}
 {% block content %}
 <h1>Account Type Mannager</h1>
-<form method="post" action="{{ url_for('accountTypeMannager') }}">
+<form method="post" action="{{ url_for('accountTypeMannager', userid=userid) }}">
     {{ form.csrf_token }}
-    {{ render_field(form.userid) }}
     {{ render_field(form.accounttype) }}
     {{ form.submit }}
-    <a href="/">Return to dashboard</a>
-    <a href="/users">View Users</a>
 </form>
 {% endblock %}
