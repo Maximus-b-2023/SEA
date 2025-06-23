@@ -51,7 +51,7 @@ def updateAccountType(UID,targetUID, newAccountType):
         return "connection failed"
     if authAdmin(UID) == True:
         try:
-            sql = '''UPDATE users SET ACCOUNTTYPE = "''' + newAccountType + '" WHERE ROWID = ' + str(targetUID) + ';'
+            sql = '''UPDATE users SET accounttype = "''' + newAccountType + '" WHERE ROWID = ' + str(targetUID) + ';'
             conn.execute(sql)
             conn.commit()
             print ("User " + str(targetUID) + " updated to account type " + newAccountType)
