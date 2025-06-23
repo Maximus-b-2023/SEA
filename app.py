@@ -63,12 +63,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Log In")
 
 class PasswordUpdateForm(FlaskForm):
-    newpassword = PasswordField("NewPassword", validators=[InputRequired(), Length(min=6, max=80)])
-    confirmpassword = PasswordField("ConfirmPassword", validators=[InputRequired(), Length(min=6, max=80)])
+    newpassword = PasswordField("New Password", validators=[InputRequired(), Length(min=6, max=80)])
+    confirmpassword = PasswordField("Confirm Password", validators=[InputRequired(), Length(min=6, max=80)])
     submit = SubmitField("Update Password")
 
 class AccountForm(FlaskForm):
-    userid = StringField("User ID", validators=[InputRequired()])
     accounttype = StringField("Account Type", validators=[InputRequired()])
     submit = SubmitField("Update Account Type")
 
@@ -124,20 +123,20 @@ def logout():
     flash("You were logged out. See you soon!")
     return redirect(url_for("login"))
 
-@app.route('/accountTypeMannager', methods=['GET', 'POST'])
+@app.route('/accountTypeMannager/<int:userid>', methods=['GET', 'POST'])
 @login_required
-def accountTypeMannager():
+def accountTypeMannager(userid):
     form = AccountForm()
     UID = current_user.id
     if form.validate_on_submit():
-        userId = form.userid.data
+        userId = userid
         accountType = form.accounttype.data
         if updateAccountType(UID,userId, accountType) == "User " + str(userId) + " updated to account type " + accountType:
             flash("Account type updated successfully.")
         else:
             flash("Failed to update account type. You may not have permission to do this.")
         return redirect(url_for("index"))
-    return render_template("accountTypeMannager.html", form=form)
+    return render_template("accountTypeMannager.html", form=form, userid=userid)
     
 @app.route('/users', methods=['GET'])
 @login_required
