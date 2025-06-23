@@ -63,8 +63,8 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Log In")
 
 class PasswordUpdateForm(FlaskForm):
-    newpassword = PasswordField("NewPassword", validators=[InputRequired(), Length(min=6, max=80)])
-    confirmpassword = PasswordField("ConfirmPassword", validators=[InputRequired(), Length(min=6, max=80)])
+    newpassword = PasswordField("New Password", validators=[InputRequired(), Length(min=6, max=80)])
+    confirmpassword = PasswordField("Confirm Password", validators=[InputRequired(), Length(min=6, max=80)])
     submit = SubmitField("Update Password")
 
 class AccountForm(FlaskForm):

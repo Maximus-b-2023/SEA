@@ -3,20 +3,28 @@
 Home
 {% endblock %}
 {% block content %}
-<div class="container mt-4 mb-4 ">
+<div class="container mt-4 mb-4">
     <div class="d-flex justify-content-between align-items-start mb-4">
-    <h1>Welcome, {{ current_user.username }}!</h1>
-    <a class="btn btn-outline-danger btn-sm align-self-start py-1" href="/logout">Log Out</a>
-</div>
-<div class="d-flex flex-column gap-2">
-    <a class="btn btn-primary"href="/crops">Crops</a>
-    <a class="btn btn-primary" href="/sales">Sales</a>
-    <a class="btn btn-primary" href="/addSale">Add Sale</a>
-    {% if current_user.accounttype == "Admin" %}
-        <a class="btn btn-primary" href="/accountTypeMannager">Account Type Mannager</a>
-        <a class="btn btn-primary" href="/users">Users</a>
-        <a class="btn btn-primary" href="{{ url_for('updatePassword', userid=current_user.id) }}">Update Password</a>
-    {% endif %}
-</div>
+        <h1>Welcome, {{ current_user.username }}!</h1>
+    </div>
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <a class="btn btn-primary w-100 py-4" href="/crops">Crops</a>
+        </div>
+        <div class="col-12 col-md-6">
+            <a class="btn btn-primary w-100 py-4" href="/sales">Sales</a>
+        </div>
+        <div class="col-12 col-md-6">
+            <a class="btn btn-primary w-100 py-4" href="/addSale">Add Sale</a>
+        </div>
+        <div class="col-12 col-md-6">
+            <a class="btn btn-primary w-100 py-4" href="{{ url_for('updatePassword', userid=current_user.id) }}">Update Password</a>
+        </div>
+        {% if current_user.accounttype == "Admin" %}
+        <div class="col-12 col-md-6 mx-auto">
+            <a class="btn btn-primary w-100 py-4" href="/users">Users</a>
+        </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
