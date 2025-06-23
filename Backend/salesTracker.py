@@ -5,7 +5,7 @@ from costCalculators import calcSeedCost
 
 def createSaleReport(userId,cropId, season, quantity, revenue):
     try:
-        conn = sqlite3.connect('./Database/tables.db')
+        conn = sqlite3.connect('./instance/db.sqlite3')
     except:
         return "connection failed"
     profit = revenue - calcSeedCost(cropId, quantity)
