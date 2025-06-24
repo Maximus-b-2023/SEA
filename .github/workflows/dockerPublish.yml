@@ -20,5 +20,5 @@ jobs:
 
       - name: Build and push
         run: |
-          docker build -t maximusb/sea-flask-app:latest .
-          docker push maximusb/sea-flask-app:latest
+          docker build -t maximusb2023/sea-flask-app:latest .
+          docker push maximusb2023/sea-flask-app:latest
