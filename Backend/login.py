@@ -1,6 +1,13 @@
 import sqlite3
 import os
 
+def setup_test_db():
+    # Ensure the instance directory exists
+    os.makedirs('./instance', exist_ok=True)
+    # Create a fresh test database
+    if os.path.exists(TEST_DB):
+        os.remove(TEST_DB)
+    conn = sqlite3.connect(TEST_DB)
 
 def login(email,password):
     try:
