@@ -21,8 +21,10 @@ jobs:
 
       - name: Test with Unit Tests
         run: |
+          cd Backend
           python -m tests.test_routes
 
       - name: Test with pytest
         run: |
+          cd Backend
           pytest
