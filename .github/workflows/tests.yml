@@ -21,7 +21,7 @@ jobs:
 
       - name: Test with Unit Tests
         run: |
-          cd BackendS
+          cd Backend
           python -m tests.test_logic
 
       - name: Test with pytest
