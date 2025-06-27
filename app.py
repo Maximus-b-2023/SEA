@@ -113,6 +113,11 @@ def mockSales():
         db.session.add(Sales(cropid=3, season="Spring", quantitysold=15, profitmade=1500, userid=2))
         db.session.add(Sales(cropid=4, season="Spring", quantitysold=20, profitmade=2000, userid=3))
         db.session.add(Sales(cropid=5, season="Spring", quantitysold=25, profitmade=2500, userid=4))
+        db.session.add(Sales(cropid=6, season="Spring", quantitysold=30, profitmade=2700, userid=5))
+        db.session.add(Sales(cropid=7, season="Spring", quantitysold=15, profitmade=1500, userid=6))
+        db.session.add(Sales(cropid=8, season="Spring", quantitysold=250, profitmade=25000, userid=7))
+        db.session.add(Sales(cropid=9, season="Spring", quantitysold=55, profitmade=5500, userid=8))
+        db.session.add(Sales(cropid=10, season="Spring", quantitysold=75, profitmade=7500, userid=9))
         db.session.commit()
     
 def initDB():
@@ -154,6 +159,43 @@ def initDB():
             new_user = Users(username="User4", email="User4@user.com", password=hashed_pw)
             db.session.add(new_user)
             db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User5") | (Users.email == "User5@email.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser5", method="pbkdf2:sha256")
+            new_user = Users(username="User5", email="User5@email.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User6") | (Users.email == "User6@email.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser6", method="pbkdf2:sha256")
+            new_user = Users(username="User6", email="User6@email.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User7") | (Users.email == "User7@email.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser7", method="pbkdf2:sha256")
+            new_user = Users(username="User7", email="User7@email.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User8") | (Users.email == "User8@email.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser8", method="pbkdf2:sha256")
+            new_user = Users(username="User8", email="User8@email.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+        if not Users.query.filter(
+        (Users.username == "User9") | (Users.email == "User9@email.com")
+        ).first():
+            hashed_pw = generate_password_hash("TestUser9", method="pbkdf2:sha256")
+            new_user = Users(username="User9", email="User9@email.com", password=hashed_pw)
+            db.session.add(new_user)
+            db.session.commit()
+
+
         setAdmin()  # Ensure the first user is an admin
         if not Crops.query.first():
             mockCrops()
